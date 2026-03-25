@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreLocation
+import UIKit
 
 struct ContentView: View {
     @EnvironmentObject var trackingService: TrackingService
@@ -61,6 +62,13 @@ struct ContentView: View {
                     } label: {
                         Label("Add Server", systemImage: "plus")
                     }
+                }
+                
+                Section(header: Text("Device Info")) {
+                    Text(UIDevice.current.identifierForVendor?.uuidString ?? "Unknown")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .textSelection(.enabled)
                 }
             }
             .sheet(isPresented: $showingAddServer) {
