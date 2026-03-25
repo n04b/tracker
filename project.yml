@@ -1,0 +1,27 @@
+name: Tracker
+options:
+  bundleIdPrefix: com.example
+targets:
+  Tracker:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources: Sources
+    info:
+      path: Tracker/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSLocationWhenInUseUsageDescription: "Location is required to track your device continuously."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Location is required to track your device continuously."
+        UIBackgroundModes:
+          - location
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
