@@ -16,6 +16,14 @@ struct ContentView: View {
                                 .font(.system(size: 34, weight: .bold))
                             Text(formatCoordinate(location.coordinate.longitude, isLat: false))
                                 .font(.system(size: 34, weight: .bold))
+                            
+                            HStack {
+                                Image(systemName: "mountain.2.fill")
+                                Text(String(format: "%.1f m", location.altitude))
+                            }
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
                         }
                         .padding(.vertical, 8)
                         
