@@ -22,6 +22,7 @@ public class TrackingService: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     public init() {
+        UIDevice.current.isBatteryMonitoringEnabled = true
         loadServers()
         locationService.$lastLocation
             .sink { [weak self] _ in
@@ -101,6 +102,16 @@ public class TrackingService: ObservableObject {
         let identifierForVendor = UIDevice.current.identifierForVendor?.uuidString
         let ms = Int64(location.timestamp.timeIntervalSince1970 * 1000)
         
+        let level = UIDevice.current.batteryLevel
+        let batteryLevel: Float? = level >= 0 ? level : nil
+        var batteryStateStr: String?
+        switch UIDevice.current.batteryState {
+        case .unplugged: batteryStateStr = "unplugged"
+        case .charging: batteryStateStr = "charging"
+        case .full: batteryStateStr = "full"
+        default: batteryStateStr = nil
+        }
+        
         return LocationPayload(
             identifierForVendor: identifierForVendor,
             lat: location.coordinate.latitude,
@@ -109,6 +120,8 @@ public class TrackingService: ObservableObject {
             altitude: location.altitude,
             speed: location.speed >= 0 ? location.speed : nil,
             heading: location.course >= 0 ? location.course : nil,
+            batteryLevel: batteryLevel,
+            batteryState: batteryStateStr,
             timestamp: ms
         )
     }
