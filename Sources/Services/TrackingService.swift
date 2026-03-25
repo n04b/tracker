@@ -7,7 +7,11 @@ import Combine
 public class TrackingService: ObservableObject {
     public static let shared = TrackingService()
     
-    @Published public var servers: [ServerConfig] = []
+    @Published public var servers: [ServerConfig] = [] {
+        didSet {
+            checkTrackingState()
+        }
+    }
     @Published public var lastSendDate: Date?
     @Published public var isTracking: Bool = false
     
@@ -24,6 +28,23 @@ public class TrackingService: ObservableObject {
                 self?.objectWillChange.send()
             }
             .store(in: &cancellables)
+            
+        checkTrackingState()
+    }
+    
+    private func checkTrackingState() {
+        let hasActiveServers = servers.contains { $0.isActive }
+        if hasActiveServers {
+            if !isTracking {
+                isTracking = true
+                startTracking()
+            }
+        } else {
+            if isTracking {
+                isTracking = false
+                stopTracking()
+            }
+        }
     }
     
     public func startTracking() {
