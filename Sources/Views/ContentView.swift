@@ -55,18 +55,30 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("Tracker")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Toggle("Track", isOn: $trackingService.isTracking)
-                        .onChange(of: trackingService.isTracking) { newValue in
-                            if newValue {
-                                trackingService.startTracking()
-                            } else {
-                                trackingService.stopTracking()
-                            }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        if trackingService.isTracking {
+                            trackingService.isTracking = false
+                            trackingService.stopTracking()
+                        } else {
+                            trackingService.isTracking = true
+                            trackingService.startTracking()
                         }
-                        .labelsHidden()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: trackingService.isTracking ? "stop.fill" : "location.fill")
+                                .font(.title3)
+                            Text(trackingService.isTracking ? "Stop track" : "Start track")
+                                .fontWeight(.bold)
+                                .font(.title3)
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(trackingService.isTracking ? Color.red.opacity(0.15) : Color.blue.opacity(0.15))
+                        .foregroundColor(trackingService.isTracking ? .red : .blue)
+                        .clipShape(Capsule())
+                    }
                 }
             }
             .sheet(isPresented: $showingAddServer) {
