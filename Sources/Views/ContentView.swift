@@ -47,8 +47,8 @@ struct ContentView: View {
                     Spacer()
                     Text("Long-press to edit").font(.caption).foregroundColor(.secondary).textCase(.none)
                 }, footer: Text("Servers marked with green are currently transmitting live coordinate data.")) {
-                    ForEach(trackingService.servers) { server in
-                        ServerRow(server: server)
+                    ForEach($trackingService.servers) { $server in
+                        ServerRow(server: $server)
                             .onLongPressGesture {
                                 editingServer = server
                                 showingAddServer = true
@@ -89,13 +89,14 @@ struct ContentView: View {
 }
 
 struct ServerRow: View {
-    let server: ServerConfig
+    @Binding var server: ServerConfig
     @EnvironmentObject var trackingService: TrackingService
     
     var body: some View {
         HStack {
+            let isFailing = trackingService.failingServerIDs.contains(server.id)
             Circle()
-                .fill(server.isActive ? Color.green : Color.red)
+                .fill(server.isActive ? (isFailing ? Color.red : Color.green) : Color.gray.opacity(0.3))
                 .frame(width: 10, height: 10)
             
             VStack(alignment: .leading) {
@@ -109,11 +110,11 @@ struct ServerRow: View {
             
             Spacer()
             
-            Toggle("", isOn: Binding(
-                get: { server.isActive },
-                set: { _ in trackingService.toggleServerActive(server.id) }
-            ))
-            .labelsHidden()
+            Toggle("", isOn: $server.isActive)
+                .labelsHidden()
+                .onChange(of: server.isActive) { _ in
+                    trackingService.saveServers()
+                }
         }
         .padding(.vertical, 4)
     }

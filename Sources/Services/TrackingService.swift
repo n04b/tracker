@@ -12,6 +12,7 @@ public class TrackingService: ObservableObject {
             checkTrackingState()
         }
     }
+    @Published public var failingServerIDs: Set<UUID> = []
     @Published public var lastSendDate: Date?
     @Published public var isTracking: Bool = false
     
@@ -87,8 +88,10 @@ public class TrackingService: ObservableObject {
                 try await NetworkService.shared.send(payload: payload, to: url)
                 anySuccess = true
                 print("Successfully sent to \(server.name)")
+                failingServerIDs.remove(server.id)
             } catch {
                 print("Failed to send to \(server.name): \(error)")
+                failingServerIDs.insert(server.id)
             }
         }
         
